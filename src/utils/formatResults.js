@@ -49,25 +49,8 @@ const fixEndOfText = (resultJson) => {
 
 // Function to format the results, fix the JSON structure,
 // parse the JSON, and filter the valid results.
-const formatResults = (resultsString) => {
-  let results = resultsString
-  // .trim().split(/}\s*{/);
-console.log(results);
-  results = results.map((resultString) => {
-    let resultJson = {};
-
-    let result = removeNewlinesAndSpaces(resultString);
-    result = fixJsonStructure(result);
-
-    try {
-      resultJson = JSON.parse(result);
-      resultJson = fixEndOfText(resultJson);
-    } catch (e) {}
-
-    return resultJson;
-  });
-
-  return filterValidResults(results);
+const formatResults = (results) => {
+  
 };
 
-export default formatResults;
+// export default formatResults;

@@ -7,12 +7,13 @@ import LoadingResult from '../LoadingResult/LoadingResult';
 
 function ResultsList() {
   const { searchResults, isLoadingResults } = useContext(AppContext);
-
-  const resultsList = searchResults.map((result, index) => {
+console.log(searchResults);
+  const resultsList = searchResults.hits['hits'].map((result, index) => {
+    console.log(result);
     return (
       <Result
-        title={ result.title }
-        text={ result.text }
+        document={result}
+
         key={ index }
       />
     );
@@ -24,7 +25,7 @@ function ResultsList() {
         resultsList
       }
 
-      { (!resultsList.length || isLoadingResults) &&
+      { (!resultsList.length || isLoadingResults ) &&
         <LoadingResult />
       }
     </div>

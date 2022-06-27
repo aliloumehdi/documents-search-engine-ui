@@ -2,7 +2,7 @@ import React, { createContext, useState, useRef } from 'react';
 import { useNavigate } from "react-router-dom";
 import OpenAI from 'openai-api';
 
-import formatResults from '../../utils/formatResults';
+ 
 import { SearchTemplate, ArticleTemplate } from '../../utils/templates';
 import axios from 'axios';
 const AppContext = createContext();
@@ -27,16 +27,16 @@ const AppContextProvider = ({ children }) => {
 
     try {
 
-      console.log(process.env);
-      await    axios.get(`${process.env.REACT_APP_ELK_URL}/twitter/_search?q=${text}`)
+       
+      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${text}`)
       .then(res => {
         gptResponse=res
+        setIsLoadingArticle(false);
       })
 
   
-      console.log(gptResponse.data);
-  
-      setIsLoadingArticle(false);
+    
+     
   
       return gptResponse.data;
     } catch (error) {
@@ -49,23 +49,31 @@ const AppContextProvider = ({ children }) => {
   const generateResults = async (searchTerm) => {
     const lastResults = lastResultsString.current;
 console.log("Looking for results",searchTerm);
-   
+setIsLoadingResults(true);
 
     let gptResponse;
-    console.log(process.env);
-    setIsLoadingResults(true);
+ 
+  
     try {
-      await    axios.get(`${process.env.REACT_APP_ELK_URL}/twitter/_search?q=${searchTerm}`)
+      console.log(gptResponse);
+
+      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${searchTerm}`)
       .then(res => {
+        
         gptResponse=res
+      
         console.log(res);
+        setIsLoadingArticle(false);
+        setSearchResults(gptResponse.data);
+         
+setIsLoadingResults(false);
+       
       })
 
    
-      console.log(gptResponse);
+      console.log(gptResponse.data);
   
-      setIsLoadingArticle(false);
-  
+ 
       return gptResponse.data;
     } catch (error) {
       console.log("error");
@@ -101,18 +109,21 @@ console.log("Looking for results",searchTerm);
   };
 
   const getResults = async (term) => {
-    setSearchResults([]);
+    // setSearchResults([]);
 
-    let results = formatResults(await generateResults(term));
-    let numberOfResults = results.length;
+    let results = await generateResults(term) ;
+    // let results = formatResults(await generateResults(term));
+    // let numberOfResults = results.length;
+// console.log(results);
+//     setSearchResults(results);
 
-    setSearchResults(results);
-
-    if (numberOfResults < 3) getMoreResults(numberOfResults);
+    // if (numberOfResults < 3) getMoreResults(numberOfResults);
   };
 
   const getMoreResults = async (numberOfPrevResults) => {
-    let newResults = formatResults(await generateResults(searchTerm));
+    // let newResults = formatResults(await generateResults(searchTerm));
+    let newResults = await generateResults(searchTerm);
+    
     let numberOfResults = numberOfPrevResults + newResults.length;
 
     setSearchResults(prev => [...prev, ...newResults]);

@@ -17,9 +17,9 @@ function Results() {
         <div className="mb-6 text-sm text-googray">
           About ∞ results
         </div>
-
+        { !isLoadingResults &&
         <ResultsList />
-
+        }
         { !isLoadingResults &&
           <Button
             onClick={ getMoreResults }

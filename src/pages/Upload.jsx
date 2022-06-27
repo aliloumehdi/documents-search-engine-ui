@@ -78,7 +78,7 @@ function Upload() {
   formData.append('rawdoc',file);
   formData.append('metadata',JSON.stringify(metadata))
   // ${process.env.REACT_APP_API_URL}
-  axios.post(`http://192.168.1.9:3000/docs/upload`,formData).then((res)=>{
+  axios.post(`http://localhost:3001/docs/upload`,formData).then((res)=>{
     // toast.success('Document indexed !', {
     //   position: "bottom-right",
     //   autoClose: 5000,
