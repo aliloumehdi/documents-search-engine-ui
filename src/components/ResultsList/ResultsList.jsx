@@ -3,19 +3,26 @@ import React, { useContext } from 'react';
 import { AppContext } from '../../contexts/AppContext/AppContext';
 
 import Result from '../Result/Result';
-import LoadingResult from '../LoadingResult/LoadingResult';
-
+import LoadingResult from '../LoadingResult/LoadingResult'; 
 function ResultsList() {
   const { searchResults, isLoadingResults } = useContext(AppContext);
+  
 console.log(searchResults);
   const resultsList = searchResults.hits['hits'].map((result, index) => {
     console.log(result);
+ 
     return (
+<div>
+ 
+ 
+ 
       <Result
         document={result}
 
         key={ index }
       />
+</div>
+    
     );
   });
 
