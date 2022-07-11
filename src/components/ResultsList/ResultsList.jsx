@@ -7,9 +7,8 @@ import LoadingResult from '../LoadingResult/LoadingResult';
 function ResultsList() {
   const { searchResults, isLoadingResults } = useContext(AppContext);
   
-console.log(searchResults);
-  const resultsList = searchResults.hits['hits'].map((result, index) => {
-    console.log(result);
+ console.log(searchResults);
+  const resultsList = searchResults.map((result, index) => {
  
     return (
 <div>

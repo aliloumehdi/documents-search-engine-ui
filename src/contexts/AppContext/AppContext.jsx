@@ -1,70 +1,42 @@
-import React, { createContext, useState, useRef } from 'react';
-import { useNavigate } from "react-router-dom";
-import OpenAI from 'openai-api';
+import React, { createContext, useState } from 'react';
+import { useNavigate } from "react-router-dom"; 
 
- 
-import { SearchTemplate, ArticleTemplate } from '../../utils/templates';
+  
 import axios from 'axios';
 const AppContext = createContext();
 
 const AppContextProvider = ({ children }) => {
-  const navigate = useNavigate();
-  
-  const openai = new OpenAI(process.env.REACT_APP_OPENAI_API_KEY);
+  const navigate = useNavigate(); 
 
   
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isLoadingResults, setIsLoadingResults] = useState(false);
   const [isLoadingArticle, setIsLoadingArticle] = useState(false);
-  const lastResultsString = useRef('');
+  const size =  10 ;
+  const [from, setFrom] = useState(0);
+  const [total, setTotal] = useState(0);
+ 
 
  
-  const generateArticleText = async (text) => {
-    let gptResponse;
-    
-    setIsLoadingArticle(true);
-
-    try {
-
-       
-      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${text}`)
-      .then(res => {
-        gptResponse=res
-        setIsLoadingArticle(false);
-      })
-
-  
-    
-     
-  
-      return gptResponse.data;
-    } catch (error) {
-      console.log("error");
-      alert('There are problems accessing the API');
-      window.location.href = '/';
-    }
-  };
 
   const generateResults = async (searchTerm) => {
-    const lastResults = lastResultsString.current;
-console.log("Looking for results",searchTerm);
+    console.log("ok");
 setIsLoadingResults(true);
 
     let gptResponse;
  
   
     try {
-      console.log(gptResponse);
-
-      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${searchTerm}`)
+ 
+      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${searchTerm}&size=${size}&from=${from}`)
       .then(res => {
         
         gptResponse=res
-      
-        console.log(res);
+      setTotal(gptResponse.data.hits.total.value)
+         
         setIsLoadingArticle(false);
-        setSearchResults(gptResponse.data);
+        setSearchResults(gptResponse.data.hits['hits']);
          
 setIsLoadingResults(false);
        
@@ -78,74 +50,53 @@ setIsLoadingResults(false);
     } catch (error) {
       console.log("error");
       alert('There are problems accessing the API');
-      // window.location.href = '/';
-    }
-    // try {
-    //   gptResponse = await openai.complete({
-    //     engine: 'text-davinci-001',
-    //     prompt: query,
-    //     maxTokens: 1000,
-    //     temperature: 1,
-    //     topP: 1,
-    //     presencePenalty: 0,
-    //     frequencyPenalty: 2,
-    //     bestOf: 1,
-    //     n: 1,
-    //     stream: false,
-    //     stop: ['"""']
-    //   });
-
-    //   //console.log(gptResponse.data.choices[0].text);
       
-    //   lastResultsString.current = gptResponse.data.choices[0].text;
-
-    //   setIsLoadingResults(false);
-
-    //   return gptResponse.data.choices[0].text;
-    // } catch (error) {
-    //   alert('There are problems accessing the API');
-    //   window.location.href = '/';
-    // }
+    }
+ 
   };
 
   const getResults = async (term) => {
-    // setSearchResults([]);
-
+     
+   console.log("ok");
     let results = await generateResults(term) ;
-    // let results = formatResults(await generateResults(term));
-    // let numberOfResults = results.length;
-// console.log(results);
-//     setSearchResults(results);
-
-    // if (numberOfResults < 3) getMoreResults(numberOfResults);
+   
   };
 
   const getMoreResults = async (numberOfPrevResults) => {
+    console.log("ok");
     // let newResults = formatResults(await generateResults(searchTerm));
-    let newResults = await generateResults(searchTerm);
-    
-    let numberOfResults = numberOfPrevResults + newResults.length;
-
-    setSearchResults(prev => [...prev, ...newResults]);
-
-    if (numberOfResults < 3) getMoreResults(numberOfResults);
+    // if(total===searchResults.length &&total<from+size){
+    //   return;
+    // }
+    // else{
+    //   console.log(from,size);
+    //   setFrom(from+size);
+    //   let newResults = await generateResults(searchTerm);
+      
+    //   setSearchResults(newResults.hits.hits);
+  
+    // }
+    if( total>from+size){
+      console.log(from,size);
+      setFrom(from+size);
+      let newResults = await generateResults(searchTerm);
+    // const data=new Array(searchResults,newResults.hits.hits)
+    // data.concat
+    //  console.log("dataaa",data);
+    //   setSearchResults(data);
+    }
+   
   };
 
   const docsSearch = (term) => {
     if (term.trim().length > 0) {
       navigate('/results?search=' + term.trim());
-    
+  
       getResults(term.trim());
     }
   };
 
-  const imFeelingLucky = async (term) => {
-    if (searchTerm.trim().length > 0) {
-      navigate('/site?term=' + term.trim());
 
-      await getResults(term.trim());
-    }
-  };
 
  
 
@@ -158,12 +109,10 @@ setIsLoadingResults(false);
       setSearchTerm,
       searchResults,
       isLoadingResults,
-      isLoadingArticle,
-      generateArticleText,
+      isLoadingArticle, 
       docsSearch,
-      getMoreResults,
-      imFeelingLucky,
-      
+      getMoreResults, 
+      total
     }}>
       { children }
     </AppContext.Provider>
@@ -173,3 +122,37 @@ setIsLoadingResults(false);
 };
 
 export { AppContext, AppContextProvider };
+
+
+
+// const generateArticleText = async (text) => {
+//   let gptResponse;
+  
+//   setIsLoadingArticle(true);
+
+//   try {
+
+     
+//     await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${text}`)
+//     .then(res => {
+//       gptResponse=res
+//       setIsLoadingArticle(false);
+//     })
+
+// const imFeelingLucky = async (term) => {
+//   if (searchTerm.trim().length > 0) {
+//     navigate('/site?term=' + term.trim());
+
+//     await getResults(term.trim());
+//   }
+// };
+  
+   
+
+//     return gptResponse.data;
+//   } catch (error) {
+//     console.log("error");
+//     alert('There are problems accessing the API');
+//     window.location.href = '/';
+//   }
+// };

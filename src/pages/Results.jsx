@@ -7,7 +7,8 @@ import ResultsList from '../components/ResultsList/ResultsList';
 import Button from '../components/Button/Button';
 
 function Results() {
-  const { isLoadingResults, getMoreResults } = useContext(AppContext);
+  console.log("entreed here");
+  const { isLoadingResults, getMoreResults,total } = useContext(AppContext);
 
   return (
     <div className="w-full h-screen">
@@ -15,7 +16,7 @@ function Results() {
 
       <div className="pb-6 mt-2 text-left pl-44">
         <div className="mb-6 text-sm text-googray">
-          About ∞ results
+          {'About '+total+' results'}
         </div>
         { !isLoadingResults &&
         <ResultsList />

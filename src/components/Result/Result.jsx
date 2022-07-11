@@ -1,38 +1,35 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react'; 
 import { AiOutlineFilePdf } from "react-icons/ai"
-import {MdOutlineOpenInNew}from "react-icons/md"
+import {MdOutlineOpenInNew,MdOutlineInfo}from "react-icons/md" 
+import { Modal  } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.css"; 
+import '../../App.css'
+import ViewerComponent from '../Viewer/Viewer.component';
 function Result({ document }) {
-  let [titleColor, setTitleColor] = useState('text-goolink');
+  // let [titleColor, setTitleColor] = useState('text-goolink');
+  // const [visibility, setVisibility] = useState(false);
 
-  const handleClick = () => {
-    setTitleColor('text-goolink-visited');
-  };
-  const truncate= (str)=> {
-    return str.length > 10 ? str.substring(0, 120) + "..." : str;
+  // const popupCloseHandler = () => {
+  //   setVisibility(false);
+  // };
+ 
+  // const isShowPopup = (status) => {  
+  //   this.setState({ showModalPopup: status });  
+  // };   
+  const [show, setShow] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+
+  const handleShow = () => setShow(true); 
+  const handleShowDetails = () => setShowDetails(true); 
+
+ 
+  const truncate= (str)=> { 
+    return str.length > 1000 ? str.substring(0, 120) + "..." : str;
 }
   return (
-    // <div classNameName="w-6/12 text-left font-roboto">
-      
-    //   <Link
-    //  to={"/site"}
-    //     target="_blank"
-    //     classNameName={
-    //       titleColor +
-    //       ' text-xl'
-    //     }
-    //     onClick={ handleClick }
-    //     onContextMenu={ handleClick }
-    //   >
-    //     { document._source.filename }
-    //   </Link>
-
-    //   <p classNameName="text-md text-googray-text">
-    //     { document._source.content }
-    //   </p>
-    // </div>
+ 
     <div className="my-3 max-w-sm w-full lg:max-w-full lg:flex">
-  <div className="border border-gray-400 flex h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"   >
+  <div className="thumbnail border-gray-400 flex h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"   >
      
 
       <AiOutlineFilePdf className='m-auto' color='red' size={70}></AiOutlineFilePdf>
@@ -47,9 +44,57 @@ function Result({ document }) {
   
       
       <div className="flex">
-      <button  className=" bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded ml-auto" >
-<MdOutlineOpenInNew className="m-auto"></MdOutlineOpenInNew>  
+      <button   onClick={handleShowDetails} className=" bg-transparent hover:bg-blue-500 text-blue-700 font-semibold   py-2 px-4 border border-blue-500 hover:border-transparent rounded ml-auto" >
+<MdOutlineInfo  className="m-auto"></MdOutlineInfo>  
+ 
+         <Modal  dialogClassName="modal-viewer"
+          onHide={() => setShowDetails(false)}
+         show={showDetails}>
+        <Modal.Header closeButton>
+          <Modal.Title>Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+        <table className="table-auto">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">Key</th>
+                <th className="px-4 py-2">Value</th>
+              
+              </tr>
+            </thead>
+            <tbody>
+             {document._source.metadata?.map((index)=> (
+                <tr className="bg-gray-100">
+                <td className="border px-4 py-2">{index.name}</td>
+                <td className="border px-4 py-2">{index.val}</td>
+              
+              
+              </tr>
+            ))}
+              
+             
+            </tbody>
+          </table>
+        </Modal.Body>
+     
+      </Modal>
 </button>
+      <button   onClick={handleShow} className=" bg-transparent hover:bg-blue-500 text-blue-700 font-semibold   py-2 px-4 border border-blue-500 hover:border-transparent rounded ml-auto" >
+<MdOutlineOpenInNew  className="m-auto"></MdOutlineOpenInNew>  
+ 
+         <Modal  dialogClassName="modal-viewer"
+          onHide={() => setShow(false)}
+         show={show}>
+        <Modal.Header closeButton>
+          <Modal.Title>{document._source.fileName}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ViewerComponent  document={document}></ViewerComponent>
+        </Modal.Body>
+     
+      </Modal>
+</button>
+
       </div>
     
   </div>

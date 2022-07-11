@@ -1,7 +1,9 @@
+ 
 import React, { useRef } from 'react';
 import Button from '../components/Button/Button';
 import Logo from '../components/Logo/Logo'; 
-import { AiOutlinePlus } from "react-icons/ai"
+import { AiOutlinePlus,AiFillSave } from "react-icons/ai"
+import { MdDeleteForever } from "react-icons/md"
 import { FaTimes } from "react-icons/fa";
 import './../App.css';
 import axios from 'axios';  
@@ -54,13 +56,14 @@ function Upload() {
     setExistingFile(false)
   }
   const addIndex=function(){
-    console.log(keyRef.current.value,valueRef.current.value);
+     
     if(keyRef.current.value&&valueRef.current.value){
         const index={
             key:keyRef.current.value,
             value:valueRef.current.value
         }
         setMetadata([...metadata, index])
+        console.log(metadata);
         keyRef.current.value = ""
         valueRef.current.value = ""
     }
@@ -68,12 +71,7 @@ function Upload() {
 
 
   const saveDoc=function(){
-  //   FormData data={
-  //     'file':file,
-  //     'metadata':JSON.stringify(metadata)
-  //   }
-  // FormData d=new FormData({})
-  // d.append('s',"ss");
+ 
   let formData = new FormData();
   formData.append('rawdoc',file);
   formData.append('metadata',JSON.stringify(metadata))
@@ -91,45 +89,22 @@ function Upload() {
     alert("Done")
   })
   }
+  // const dropAttr=function(attr){
+  //   metadata.splice(metadata.indexOf(attr),1)
+  //   setMetadata(metadata);
+  // }
+  const handleDelete=(key)=>{ 
+ 
+    setMetadata(metadata.filter(index => {
+      return index.key != key
+    }))
+  }
     return (
-        <div className="flex flex-col w-full h-screen w-5/12 h-12">
+        <div className="flex flex-col my-5">
         <div className="flex flex-col items-center justify-center w-full h-full space-y-7">
           <Logo className="text-8xl"/>
   
-          {/* <div 
-      className={
-        'flex px-4 py-2 text-xl border rounded-full hover:shadow-md focus:shadow border-googray-light h-10 ' 
-      }
-    >
-      <div className="flex items-center">
-      <AiOutlineImport></AiOutlineImport>
-
-      </div>  */}
-{/*       
-      <input
-        className="w-full px-3 outline-none font-roboto"
-        type="file"
-        // value={ searchTerm }
-        // onChange={ handleChange }
-        // onKeyDown={ handleKeyDown }
-        // autoFocus={ autoFocus }
-      /> */}
-
-      {/* { searchTerm.length > 0 &&
-        <div className="flex items-center">
-          <button
-            onClick={ clearSearchBarText }
-          >
-            <svg
-              className="w-5 h-5 text-googray hover:text-googray-text"
-              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-            >
-              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </div>
-      } */}
-    {/* </div> */}
+ 
        <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
       {
         !existingFile?
@@ -157,7 +132,7 @@ function Upload() {
         
       </label>
       { dragActive && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div> }
-    </form>`<div></div> 
+    </form><div></div> 
     {/* <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
       <input type="file" id="input-file-upload" onChange={handleChange}   />
       <label id="label-file-upload" htmlFor="input-file-upload"  className={dragActive ? "drag-active" : "" }>
@@ -194,9 +169,11 @@ function Upload() {
                 <td className="border px-4 py-2">{index.key}</td>
                 <td className="border px-4 py-2">{index.value}</td>
                 <td className="border px-4 py-2">
-                    <button onClick={addIndex} className="flex bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
-<AiOutlinePlus className="m-auto mr-1"></AiOutlinePlus> 
-</button></td>
+                  {/* <button  className="flex bg-transparent text-red-600 hover:bg-blue-500 text-blue-700 font-semibold   py-2 px-4 border border-blue-500 hover:border-transparent rounded"> */}
+<MdDeleteForever onClick={() =>  handleDelete(index.key)} className=" text-red-600 m-auto mr-1  cursor-pointer"></MdDeleteForever> 
+
+{/* </button>  */}
+ </td>
               
               </tr>
             ))}
@@ -221,11 +198,19 @@ function Upload() {
       <input ref={valueRef} className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-last-name" type="text"  />
     </div>
 </div>
-<button onClick={addIndex} className="flex bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+<div className="flex">
+<button onClick={addIndex} className="flex bg-transparent hover:bg-blue-500 text-blue-700 font-semibold   py-2 px-4 border border-blue-500 hover:border-transparent rounded">
 <AiOutlinePlus className="m-auto mr-1"></AiOutlinePlus> Add index
 </button>
+<button onClick={saveDoc} className="ml-2 flex bg-transparent hover:bg-blue-500 text-blue-700 font-semibold   py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+ 
+<AiFillSave  className="m-auto mr-1"></AiFillSave>
+ Save
+</button>
+</div>
+
         </div>
-  <button onClick={saveDoc}>send</button>
+  {/* <button onClick={saveDoc}>send</button> */}
       </div>
     );
   }

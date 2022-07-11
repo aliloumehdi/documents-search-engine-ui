@@ -90,3 +90,19 @@
 .hide{
   display: none;
 }
+
+
+
+.modal-viewer{
+  width: 50%!important;
+  max-width: none!important;
+  margin-left: auto!important;
+
+}
+div.modal{
+  padding-left: 0px!important;
+}
+
+.thumbnail{
+  border: 1px solid #9ca3af !important;
+}
