@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom"; 
 
   
@@ -17,9 +17,13 @@ const AppContextProvider = ({ children }) => {
   const [from, setFrom] = useState(0);
   const [total, setTotal] = useState(0);
  
-
- 
-
+let page=0
+//   useEffect((param) => {
+//    setFrom(param)   
+// },[]  );
+useEffect(() => {
+  console.log("rfeeee",from);
+}, [from]);
   const generateResults = async (searchTerm) => {
     console.log("ok");
 setIsLoadingResults(true);
@@ -29,7 +33,7 @@ setIsLoadingResults(true);
   
     try {
  
-      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${searchTerm}&size=${size}&from=${from}`)
+      await    axios.get(`${process.env.REACT_APP_ELK_URL}/doc/_search?q=${searchTerm}&size=${size}&from=${page}`)
       .then(res => {
         
         gptResponse=res
@@ -48,7 +52,7 @@ setIsLoadingResults(false);
  
       return gptResponse.data;
     } catch (error) {
-      console.log("error");
+      console.log(error);
       alert('There are problems accessing the API');
       
     }
@@ -63,7 +67,7 @@ setIsLoadingResults(false);
   };
 
   const getMoreResults = async (numberOfPrevResults) => {
-    console.log("ok");
+    console.log("odk");
     // let newResults = formatResults(await generateResults(searchTerm));
     // if(total===searchResults.length &&total<from+size){
     //   return;
@@ -76,11 +80,15 @@ setIsLoadingResults(false);
     //   setSearchResults(newResults.hits.hits);
   
     // }
-    if( total>from+size){
-      console.log(from,size);
-      setFrom(from+size);
+    const f=from+size
+    console.log(page);
+    if( total>f){
+     setFrom(from+size)
+      page=f
       let newResults = await generateResults(searchTerm);
-    // const data=new Array(searchResults,newResults.hits.hits)
+
+      console.log(from,size);
+      // const data=new Array(searchResults,newResults.hits.hits)
     // data.concat
     //  console.log("dataaa",data);
     //   setSearchResults(data);

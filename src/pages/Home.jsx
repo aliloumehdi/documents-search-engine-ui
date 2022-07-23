@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 
 import { AppContext } from '../contexts/AppContext/AppContext';
-
+import { useNavigate } from "react-router-dom";
 import Logo from '../components/Logo/Logo';
 import SearchBar from '../components/SearchBar/SearchBar';
 import Button from '../components/Button/Button'; 
@@ -10,7 +10,10 @@ function Home() {
     searchTerm,
     docsSearch
   } = useContext(AppContext);
-
+  const navigate = useNavigate();
+const upload=function (){
+  navigate("upload");
+}
   return ( 
     <div className="flex flex-col w-full h-screen">
 
@@ -29,7 +32,12 @@ function Home() {
           >
             Docs Search
           </Button>
-
+          <Button
+            onClick={upload }
+            className="w-max"
+          >
+           Upload
+          </Button>
  
         </div>
       </div>
